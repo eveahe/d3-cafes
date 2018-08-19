@@ -1,7 +1,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>d3 and NYC Sidewalk Cafes</title>
+    <title>d3 Cafe</title>
     <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body> 
@@ -9,15 +9,18 @@
     <div id="visHome">
     </div>
     <h2>The 100 cafes in NYC with the most sidewalk seating. Hover over to find name + location.</h2>
+   <div class="glitchButton" style="position:fixed;top:20px;right:20px;"></div>  
     <footer>
         <hr>
         The chart was made by <a href="https://eveahe.github.io">Eve Ahearn</a>, who also can be found at <a href="https://twitter.com/eveahe">@eveahe.</a>
         <br>The data is from <a href="https://opendata.cityofnewyork.us/">NYC Open Data</a> via <a href="https://public.enigma.com/datasets/new-york-city-sidewalk-cafe-licenses/4cae64c2-e309-4ee9-94d5-93ed99818bba">Enigma Public</a>. 
         Public data is cool!
         <br>Thanks to the many <a href="http://bl.ocks.org/">bl.ocks</a> I cobbled together to make this chart.
+        <br>Doesn't work well on mobile, sorry! That will be next weekend's lesson.
     </footer>
-    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-    <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+    <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="https://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+    <script src="https://button.glitch.me/button.js" data-style="glitch"></script>
 
 <script>
 
