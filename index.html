@@ -16,13 +16,45 @@
         }
         .bar{
             stroke: black;
+            fill: white;
         }
         .bar:hover{
-            fill: grey;
+            fill: hotpink;
          }
-         
+
+        /*Tooltips section*/
+        .d3-tip {
+            line-height: 1;
+            font-weight: bold;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            border-radius: 2px;
+         }
+
+        /* Creates a small triangle extender for the tooltip */
+        .d3-tip:after {
+        box-sizing: border-box;
+        display: inline;
+        font-size: 10px;
+        width: 100%;
+        line-height: 1;
+        color: rgba(0, 0, 0, 0.8);
+        content: "\25BC";
+        position: absolute;
+        text-align: center;
+        }
+
+        /* Style northward tooltips differently */
+        .d3-tip.n:after {
+        margin: -1px 0 0 0;
+        top: 100%;
+        left: 0;
+        }
+
     </style>
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
 </head>
 <body>
 
@@ -31,14 +63,6 @@
     var margin = {top:30, right:100, bottom:160, left:30},
         width  = 900 - margin.left - margin.right,
         height = 700 - margin.top  - margin.bottom;
-
-    var svg = d3.select("body")
-        .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom);
-
-    var chart = svg.append("g")
-        .attr("transform", "translate(" + margin.left + ", " + margin.top + ")");
 
     var x = d3.scale.ordinal()
         .rangeRoundBands([0, width], .1);//leave off domain
@@ -58,6 +82,24 @@
         .scale(y)
         .orient("left");
 
+    var tip = d3.tip()
+        .attr('class', 'd3-tip')
+        .offset([-10, 0])
+        .html(function(d) {
+         return "<strong>Location: </strong>" + d.city + "</span>";
+      })
+
+    var svg = d3.select("body")
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom);
+
+        svg.call(tip);
+
+    var chart = svg.append("g")
+        .attr("transform", "translate(" + margin.left + ", " + margin.top + ")");
+
+
     d3.csv("cafes.csv", convertToNumber, function(error, data){
 
         //optionally sort data
@@ -76,7 +118,9 @@
             .attr("width", function(d){ return x.rangeBand(); })
             .attr("height", function(d){ return height - y(d.swc_tables); })
             .attr("class", "bar")
-            .style("fill", function(d) { return color(d.city); });
+            // .style("fill", function(d) { return color(d.city); })
+            .on('mouseover', tip.show)
+            .on('mouseout', tip.hide);
 
         //setting the axes
         svg.append("g")
