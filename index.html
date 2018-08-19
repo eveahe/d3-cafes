@@ -3,10 +3,24 @@
     <meta charset="utf-8">
     <title>Sample Cafes in NYC with Outdoor Seating</title>
     <h1>Learning D3 through NYC's Outdoor Seating</h1>
+    <div id="visHome">
+    </div>
+    <h2>The cafes in NYC with the most tables. Hover over to find name + location.</h2>
     <style>
+
+        h1 {
+            font-family: monospace;
+            text-align: center;
+        }
+
+        h2 {
+            font-family: monospace;
+            text-align: center;
+        }
+
         .axis text{
-          font-family: Helvetica, Arial, sans-serif;
-          font-size: 9px;
+          font-family: monospace;
+          font-size: 14px;
           text-anchor: end;
         }
         .axis path{
@@ -14,6 +28,12 @@
           stroke:black;
           stroke-width: 1.5px;
         }
+
+        .axis line {
+			fill: none;
+			stroke: black;
+			shape-rendering: crispEdges;
+			}
         .bar{
             stroke: black;
             fill: white;
@@ -34,24 +54,24 @@
 
         /* Creates a small triangle extender for the tooltip */
         .d3-tip:after {
-        box-sizing: border-box;
-        display: inline;
-        font-size: 10px;
-        width: 100%;
-        line-height: 1;
-        color: rgba(0, 0, 0, 0.8);
-        content: "\25BC";
-        position: absolute;
-        text-align: center;
-        }
+            box-sizing: border-box;
+            display: inline;
+            font-size: 10px;
+            width: 100%;
+            line-height: 1;
+            color: rgba(0, 0, 0, 0.8);
+            content: "\25BC";
+            position: absolute;
+            text-align: center;
+            }
 
         /* Style northward tooltips differently */
         .d3-tip.n:after {
-        margin: -1px 0 0 0;
-        top: 100%;
-        left: 0;
-        }
-
+            margin: -1px 0 0 0;
+            top: 100%;
+            left: 0;
+            }
+     
     </style>
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
     <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
@@ -60,8 +80,8 @@
 
 <script>
 
-    var margin = {top:30, right:100, bottom:160, left:30},
-        width  = 900 - margin.left - margin.right,
+    var margin = {top:20, right:100, bottom:20, left:90},
+        width  = 1500 - margin.left - margin.right,
         height = 700 - margin.top  - margin.bottom;
 
     var x = d3.scale.ordinal()
@@ -76,7 +96,8 @@
 
     var xAxis = d3.svg.axis()
         .scale(x)
-        .orient("bottom");
+        .orient("bottom")
+        .tickFormat();
 
     var yAxis = d3.svg.axis()
         .scale(y)
@@ -86,10 +107,10 @@
         .attr('class', 'd3-tip')
         .offset([-10, 0])
         .html(function(d) {
-         return "<strong>Location: </strong>" + d.city + "</span>";
+         return "<strong>" + d.dba_name + "</strong> <br>" + d.building + " " + d.street + "\n" + d.city + "</span>";
       })
 
-    var svg = d3.select("body")
+    var svg = d3.select("#visHome")
         .append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom);
@@ -100,20 +121,20 @@
         .attr("transform", "translate(" + margin.left + ", " + margin.top + ")");
 
 
-    d3.csv("cafes.csv", convertToNumber, function(error, data){
+    d3.csv("cafes2.csv", convertToNumber, function(error, data){
 
         //optionally sort data
         data.sort(function(a,b){ return b.swc_tables - a.swc_tables; });
 
         //set the domains for x and y functions here
-        x.domain(data.map(function(d){ return d.business_name; }));
+        x.domain(data.map(function(d){ return d.dba_name; }));
         y.domain([0, d3.max( data.map(function(d){ return d.swc_tables; }) )]);
 
         chart.selectAll(".bar")
             .data(data)
             .enter()
             .append("rect")
-            .attr("x", function(d){ return x(d.business_name); })
+            .attr("x", function(d){ return x(d.dba_name); })
             .attr("y", function(d){ return y(d.swc_tables); })
             .attr("width", function(d){ return x.rangeBand(); })
             .attr("height", function(d){ return height - y(d.swc_tables); })
@@ -126,16 +147,24 @@
         svg.append("g")
             .attr("class", "y axis")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-            .call(yAxis);
+            .call(yAxis)
+            .append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", ".71em")
+            .style("text-anchor", "end")
+            .text("Number of sidewalk cafe tables");
 
         svg.append("g")
             .attr("class", "x axis")
             .attr("transform", "translate(" + margin.left + "," + (height + margin.top) + ")")
             .call(xAxis)
-            .selectAll("text")
-            .attr("transform", "translate(-10,0)rotate(-65)")
-            .style("text-anchor", "end");
 
+        // svg.selectAll(".xaxis text") 
+            .append("text")
+            .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+            .attr("transform", "translate("+ (width/2) +","+(height-(padding/3))+")")  // centre below axis
+            .text("Date");
     });
 
     function convertToNumber(d){
