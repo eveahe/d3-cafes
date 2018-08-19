@@ -1,82 +1,23 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Sample Cafes in NYC with Outdoor Seating</title>
-    <h1>Learning D3 through NYC's Outdoor Seating</h1>
+    <title>d3 and NYC Sidewalk Cafes</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body> 
+    <h1>Learning d3 through NYC's Outdoor Seating</h1>
     <div id="visHome">
     </div>
-    <h2>The cafes in NYC with the most tables. Hover over to find name + location.</h2>
-    <style>
-
-        h1 {
-            font-family: monospace;
-            text-align: center;
-        }
-
-        h2 {
-            font-family: monospace;
-            text-align: center;
-        }
-
-        .axis text{
-          font-family: monospace;
-          font-size: 14px;
-          text-anchor: end;
-        }
-        .axis path{
-          fill:none;
-          stroke:black;
-          stroke-width: 1.5px;
-        }
-
-        .axis line {
-			fill: none;
-			stroke: black;
-			shape-rendering: crispEdges;
-			}
-        .bar{
-            stroke: black;
-            fill: white;
-        }
-        .bar:hover{
-            fill: hotpink;
-         }
-
-        /*Tooltips section*/
-        .d3-tip {
-            line-height: 1;
-            font-weight: bold;
-            padding: 12px;
-            background: rgba(0, 0, 0, 0.8);
-            color: #fff;
-            border-radius: 2px;
-         }
-
-        /* Creates a small triangle extender for the tooltip */
-        .d3-tip:after {
-            box-sizing: border-box;
-            display: inline;
-            font-size: 10px;
-            width: 100%;
-            line-height: 1;
-            color: rgba(0, 0, 0, 0.8);
-            content: "\25BC";
-            position: absolute;
-            text-align: center;
-            }
-
-        /* Style northward tooltips differently */
-        .d3-tip.n:after {
-            margin: -1px 0 0 0;
-            top: 100%;
-            left: 0;
-            }
-     
-    </style>
+    <h2>The 100 cafes in NYC with the most sidewalk seating. Hover over to find name + location.</h2>
+    <footer>
+        <hr>
+        The chart was made by <a href="https://eveahe.github.io">Eve Ahearn</a>, who also can be found at <a href="https://twitter.com/eveahe">@eveahe.</a>
+        <br>The data is from <a href="https://opendata.cityofnewyork.us/">NYC Open Data</a> via <a href="https://public.enigma.com/datasets/new-york-city-sidewalk-cafe-licenses/4cae64c2-e309-4ee9-94d5-93ed99818bba">Enigma Public</a>. 
+        Public data is cool!
+        <br>Thanks to the many <a href="http://bl.ocks.org/">bl.ocks</a> I cobbled together to make this chart.
+    </footer>
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
     <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
-</head>
-<body>
 
 <script>
 
@@ -90,9 +31,10 @@
     var y = d3.scale.linear()
         .range([height, 0]);//leave off domain
 
-    var color = d3.scale.ordinal()
-        .domain(["NEW YORK", "BROOKLYN", "BRONX", "ASTORIA"])
-        .range(["yellow", "pink","red", "palegreen"]);
+// This is from when I thought I'd color code by location.
+    // var color = d3.scale.ordinal()
+    //     .domain(["MANHATTAN", "BROOKLYN", "BRONX", "ASTORIA"])
+    //     .range(["yellow", "pink","red", "palegreen"]);
 
     var xAxis = d3.svg.axis()
         .scale(x)
@@ -139,7 +81,7 @@
             .attr("width", function(d){ return x.rangeBand(); })
             .attr("height", function(d){ return height - y(d.swc_tables); })
             .attr("class", "bar")
-            // .style("fill", function(d) { return color(d.city); })
+            // .style("fill", function(d) { return color(d.city); }) //color-codes by city.
             .on('mouseover', tip.show)
             .on('mouseout', tip.hide);
 
@@ -153,18 +95,12 @@
             .attr("y", 6)
             .attr("dy", ".71em")
             .style("text-anchor", "end")
-            .text("Number of sidewalk cafe tables");
+            .text("# of sidewalk tables");
 
         svg.append("g")
             .attr("class", "x axis")
             .attr("transform", "translate(" + margin.left + "," + (height + margin.top) + ")")
             .call(xAxis)
-
-        // svg.selectAll(".xaxis text") 
-            .append("text")
-            .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
-            .attr("transform", "translate("+ (width/2) +","+(height-(padding/3))+")")  // centre below axis
-            .text("Date");
     });
 
     function convertToNumber(d){
